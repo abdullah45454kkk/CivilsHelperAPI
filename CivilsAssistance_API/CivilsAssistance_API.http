@@ -1,0 +1,6 @@
+@CivilsAssistance_API_HostAddress = http://localhost:5207
+
+GET {{CivilsAssistance_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
