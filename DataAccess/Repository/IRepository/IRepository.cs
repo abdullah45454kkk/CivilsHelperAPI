@@ -11,9 +11,11 @@ namespace DataAccess.Repository.IRepository
     {
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null,
         string? includeProperties = null);
-        Task<T> Get(Expression<Func<T, bool>> filter);
+        Task<T> Get(Expression<Func<T, bool>> filter,
+        string? includeProperties = null);
         Task AddAsync(T entity);
         Task DeleteAsync(T entity);
         Task  RemoveRangeAsync(IEnumerable<T> entity);
+        Task<bool> AnyAsync(Expression<Func<T, bool>> filter); 
     }
 }

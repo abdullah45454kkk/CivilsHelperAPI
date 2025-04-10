@@ -1,6 +1,7 @@
 ﻿using DataAccess.Data;
 using DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,11 +31,30 @@ namespace DataAccess.Repository
             dbSet.Remove(entity);
         }
 
-        public async Task<T> Get(Expression<Func<T, bool>> filter)
+        public async Task<T> Get(Expression<Func<T, bool>> filter,
+        string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
-            query = query.Where(filter);
-            return await query.FirstOrDefaultAsync();
+            try
+            {
+                IQueryable<T> query = dbSet.Where(filter);
+
+                // Apply eager loading if includeProperties is provided
+                if (!string.IsNullOrEmpty(includeProperties))
+                {
+                    foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        query = query.Include(includeProperty);
+                    }
+                }
+
+                return await query.FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                // Log the error (customize this according to your needs)
+                Console.WriteLine($"Error in GetAsync: {ex.Message}");
+                return null; // Prevent application crashes by returning null
+            }
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(
@@ -63,7 +83,10 @@ namespace DataAccess.Repository
         {
             dbSet.RemoveRange(entity);
         }
-
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> filter)
+        {
+            return await dbSet.AnyAsync(filter);
+        }
     }
     
     

@@ -80,7 +80,6 @@ namespace CivilsAssistance_API.Controllers.Areas.User
                 emergency.SendAt = DateTime.UtcNow;
                 emergency.Status = "Pending";
                 emergency.UserId = GetUserId();
-
                 await _unitOfWork.EmAnother.AddAsync(emergency);
                 await _unitOfWork.Save();
 
@@ -109,6 +108,8 @@ namespace CivilsAssistance_API.Controllers.Areas.User
         {
             var userId = GetUserId();
             var emergencies = await _unitOfWork.EmPerson.GetAllAsync(e => e.UserId == userId, includeProperties: "LocalUser");
+            Console.WriteLine($"emergency:{emergencies}");
+
             return Ok(_mapper.Map<IEnumerable<EmergPersonDTO>>(emergencies));
         }
 
@@ -119,6 +120,7 @@ namespace CivilsAssistance_API.Controllers.Areas.User
         {
             var userId = GetUserId();
             var emergencies = await _unitOfWork.EmAnother.GetAllAsync(e => e.UserId == userId, includeProperties: "LocalUser");
+            Console.WriteLine($"emergency:{emergencies}");
             return Ok(_mapper.Map<IEnumerable<EmergAnotherDTO>>(emergencies));
         }
 
@@ -175,6 +177,7 @@ namespace CivilsAssistance_API.Controllers.Areas.User
             {
                 throw new UnauthorizedAccessException("User ID not found in token.");
             }
+            Console.WriteLine($"UserId: {userId}");
             return userId;
         }
     }

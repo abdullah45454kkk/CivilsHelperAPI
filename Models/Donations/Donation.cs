@@ -6,22 +6,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Models.EnumsClass;
 
-namespace Models.Emergencies
+namespace Models.Donations
 {
-    public class EmergAnother
+    public class Donation
     {
         public int Id { get; set; }
-        public DateTime SendAt { get; set; } = DateTime.UtcNow;
-        public string Status { get; set; } = "Pending";
-        public string TitleType { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime DonatedAt { get; set; }
         public string UserId { get; set; }
-
-        [ForeignKey("UserId")]
         public LocalUser LocalUser { get; set; }
-         
+        public int CampaignId { get; set; }
+        public Campaign Campaign { get; set; }
 
     }
 }
+
+

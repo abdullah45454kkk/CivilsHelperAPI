@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Models.Donations;
 using Models.Emergencies;
 using Models.User;
 
@@ -41,26 +42,47 @@ namespace Models.Mapper
 
             // Emergency Mappings
             CreateMap<EmergPerson, EmergPersonDTO>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.LocalUser != null ? src.LocalUser.UserName : null))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.LocalUser.UserName));
 
             CreateMap<EmergPersonDTO, EmergPerson>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignore Id for creation
                 .ForMember(dest => dest.SendAt, opt => opt.Ignore()) // Set programmatically
-                .ForMember(dest => dest.Status, opt => opt.Ignore()) // Set programmatically
                 .ForMember(dest => dest.LocalUser, opt => opt.Ignore()) // Handled by UserId
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
 
             CreateMap<EmergAnother, EmergAnotherDTO>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.LocalUser != null ? src.LocalUser.UserName : null))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.LocalUser.UserName));
+
 
             CreateMap<EmergAnotherDTO, EmergAnother>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.SendAt, opt => opt.Ignore())
-                .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.LocalUser, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+            CreateMap<LocalUser, UserDTO>();
+
+
+            CreateMap<Campaign, CampaignDTO>();
+            CreateMap<CampaignDTO, Campaign>()
+                .ForMember(dest => dest.Donations, opt => opt.Ignore());
+
+            CreateMap<Donation, DonationDTO>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.DonorName, opt => opt.MapFrom(src => src.LocalUser != null ? src.LocalUser.UserName : "Unknown"));
+
+            CreateMap<CreateDonationDTO, Donation>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.LocalUser, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignId, opt => opt.Ignore())
+                .ForMember(dest => dest.Campaign, opt => opt.Ignore())
+                .ForMember(dest => dest.DonatedAt, opt => opt.Ignore());
+
+
+
         }
     }
 }

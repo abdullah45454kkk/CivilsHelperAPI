@@ -1,8 +1,7 @@
 ﻿using DataAccess.Data;
 using DataAccess.IModelRepo;
 using DataAccess.Repository;
-using Microsoft.EntityFrameworkCore;
-using Models.Emergencies;
+using Models.Donations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +10,18 @@ using System.Threading.Tasks;
 
 namespace DataAccess.ModelRepo
 {
-    public class EmergPersonRepo : Repository<EmergPerson>, IEmergPersonRepo
+    public class DonationRepo : Repository<Donation>, IDonationRepo
     {
         private readonly CivilsDbContext _context;
-        public EmergPersonRepo(CivilsDbContext context) : base(context)
+
+        public DonationRepo(CivilsDbContext context) : base(context)
         {
             _context = context;
         }
-        public async Task Update(EmergPerson obj)
+
+        public async Task Update(Donation obj)
         {
-          _context.EmergPersons.Update(obj);
+          _context.Donation.Update(obj);
         }
     }
 }

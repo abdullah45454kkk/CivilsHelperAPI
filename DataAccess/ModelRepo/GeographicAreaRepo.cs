@@ -1,8 +1,8 @@
 ﻿using DataAccess.Data;
 using DataAccess.IModelRepo;
 using DataAccess.Repository;
-using Microsoft.EntityFrameworkCore;
-using Models.Emergencies;
+using Models.Donations;
+using Models.Map;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +11,18 @@ using System.Threading.Tasks;
 
 namespace DataAccess.ModelRepo
 {
-    public class EmergPersonRepo : Repository<EmergPerson>, IEmergPersonRepo
+    public class GeographicAreaRepo : Repository<GeographicArea>, IGeographicAreaRepo
     {
         private readonly CivilsDbContext _context;
-        public EmergPersonRepo(CivilsDbContext context) : base(context)
+
+        public GeographicAreaRepo(CivilsDbContext context) : base(context)
         {
             _context = context;
         }
-        public async Task Update(EmergPerson obj)
+
+        public async Task Update(GeographicArea obj)
         {
-          _context.EmergPersons.Update(obj);
+          _context.GeographicAreas.Update(obj);
         }
     }
 }

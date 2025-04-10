@@ -1,12 +1,8 @@
-﻿using DataAccess.EmailServices.IEmailService;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using DataAccess.EmailServices.IEmailService;
 
 namespace DataAccess.EmailService
 {
@@ -21,27 +17,40 @@ namespace DataAccess.EmailService
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            var smtpClient = new SmtpClient
-            {
-                Host = _configuration["Email:Smtp:Host"], // "smtp-relay.brevo.com"
-                Port = int.Parse(_configuration["Email:Smtp:Port"]), // 587
-                EnableSsl = true, // Brevo requires SSL
-                Credentials = new NetworkCredential(
-                    _configuration["Email:Smtp:Username"], // "875998001@smtp-brevo.com"
-                    _configuration["Email:Smtp:Password"]  // "hJE4FtGM3mO0H79L"
-                )
-            };
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("Civils Assistance", "mohamdenabdallah444@gmail.com"));
+            emailMessage.To.Add(new MailboxAddress("", email));
+            emailMessage.Subject = subject;
+            emailMessage.Body = new TextPart("html") { Text = message };
 
-            var mailMessage = new MailMessage
+            using var client = new SmtpClient();
+            try
             {
-                From = new MailAddress(_configuration["Email:Smtp:Username"], "Civils Assistance"), // Sender name
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true // Support for HTML emails
-            };
-            mailMessage.To.Add(email);
+                // Connect with STARTTLS for port 587
+                Console.WriteLine("Connecting to smtp-relay.brevo.com...");
+                await client.ConnectAsync(_configuration["Email:Smtp:Host"],
+                          int.Parse(_configuration["Email:Smtp:Port"]),
+                          MailKit.Security.SecureSocketOptions.StartTls);
 
-            await smtpClient.SendMailAsync(mailMessage);
+                // Authenticate
+                Console.WriteLine("Authenticating...");
+                await client.AuthenticateAsync(_configuration["Email:Smtp:Username"],
+                                             _configuration["Email:Smtp:Password"]);
+
+                // Send
+                Console.WriteLine("Sending email...");
+                await client.SendAsync(emailMessage);
+                Console.WriteLine("Email sent successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Email sending failed: " + ex.ToString());
+                throw;
+            }
+            finally
+            {
+                await client.DisconnectAsync(true);
+            }
         }
     }
 }

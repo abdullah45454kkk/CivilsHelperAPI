@@ -62,13 +62,14 @@ namespace CivilsAssistance_API.Controllers.Areas.Admin
             EmergPersonDTO emergPDTO = _mapper.Map<EmergPersonDTO>(emergency);
             emergPerson.ApplyTo(emergPDTO, ModelState);
 
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             _mapper.Map(emergPDTO, emergency);
-            _unitOfWork.EmPerson.Update(emergency);
+            await _unitOfWork.EmPerson.Update(emergency);
             await _unitOfWork.Save();
 
             return Ok(new { Message = "Status updated successfully" });
@@ -100,7 +101,7 @@ namespace CivilsAssistance_API.Controllers.Areas.Admin
             }
 
             _mapper.Map(emergAnotherDTO, emergency);
-            _unitOfWork.EmAnother.Update(emergency);
+            await _unitOfWork.EmAnother.Update(emergency);
             await _unitOfWork.Save();
 
             return Ok(new { Message = "Status updated successfully" }); // Fixed message consistency
@@ -118,7 +119,7 @@ namespace CivilsAssistance_API.Controllers.Areas.Admin
                 return NotFound(new { Message = "Emergency case not found" });
             }
 
-            _unitOfWork.EmPerson.DeleteAsync(emergency);
+            await _unitOfWork.EmPerson.DeleteAsync(emergency);
             await _unitOfWork.Save();
             return Ok(new { Message = "Emergency case deleted successfully" });
         }
@@ -135,7 +136,7 @@ namespace CivilsAssistance_API.Controllers.Areas.Admin
                 return NotFound(new { Message = "Emergency case not found" });
             }
 
-            _unitOfWork.EmAnother.DeleteAsync(emergency);
+            await _unitOfWork.EmAnother.DeleteAsync(emergency);
             await _unitOfWork.Save();
             return Ok(new { Message = "Emergency case deleted successfully" });
         }

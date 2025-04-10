@@ -1,4 +1,5 @@
 ﻿using Models.User;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DataAccess.IModelRepo
@@ -11,5 +12,7 @@ namespace DataAccess.IModelRepo
         Task<LocalUser> RegisterAdmin(RegisterationRequestDTO registerAdmin);
         Task<LocalUser> RegisterUser(RegisterationUserRequestDTO registerUser);
         Task<bool> ConfirmEmailAsync(string userId, string token);
+        Task<LocalUser> GetAsync(Expression<Func<LocalUser, bool>> filter,
+        string? includeProperties = null);
     }
 }

@@ -4,20 +4,23 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Models.Emergencies.EmergPerson;
+using static Models.EnumsClass;
 
 namespace Models.User
 {
-    public class RegisterationUserRequestDTO
+    public class RegisterationRequestDTO
     {
         public int Id { get; set; }
-        public string Email { get; set; }
         public string UserName { get; set; }
+        public string Email { get; set; }
+        public Gender gender { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Phone number is required.")]
         [RegularExpression(@"^\d{11}$", ErrorMessage = "Phone number must be 11 digits and contain only numbers.")]
-        public long Phone { get; set; }
+        public string Phone { get; set; }
 
         [Required(ErrorMessage = "Address is required.")]
         [StringLength(200, MinimumLength = 10, ErrorMessage = "Address must be between 10 and 200 characters.")]

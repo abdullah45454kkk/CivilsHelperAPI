@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.User;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CivilsAssistance_API.Controllers.Areas.User
 {
@@ -19,10 +22,12 @@ namespace CivilsAssistance_API.Controllers.Areas.User
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterationUserRequestDTO model)
         {
             if (!ModelState.IsValid)
             {
+                Console.WriteLine(ModelState);
                 return BadRequest(ModelState);
             }
 
@@ -38,10 +43,12 @@ namespace CivilsAssistance_API.Controllers.Areas.User
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO model)
         {
             if (!ModelState.IsValid)
             {
+                
                 return BadRequest(ModelState);
             }
 
@@ -82,5 +89,19 @@ namespace CivilsAssistance_API.Controllers.Areas.User
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+
+
+
+        private string GetUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token.");
+            }
+            return userId;
+        }
+
     }
 }
